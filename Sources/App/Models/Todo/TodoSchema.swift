@@ -31,6 +31,11 @@ let todoSchema = try! Schema<TodoResolver, Request> {
 			Argument("title", at: \.title)
 		}
 
+		Field("updateTodo", at: TodoResolver.updateTodo) {
+			Argument("id", at: \.id)
+			Argument("completed", at: \.completed)
+		}
+
 		Field("deleteTodo", at: TodoResolver.deleteTodo) {
 			Argument("id", at: \.id)
 		}

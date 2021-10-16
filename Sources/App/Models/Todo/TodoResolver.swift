@@ -26,6 +26,16 @@ final class TodoResolver {
 		return todo.create(on: request.db).map { todo }
 	}
 
+	func updateTodo(request: Request, arguments: UpdateTodoArugments) throws -> EventLoopFuture<Bool> {
+		return Todo.find(arguments.id, on: request.db)
+			.unwrap(or: Abort(.notFound))
+			.flatMap { todo -> EventLoopFuture<Void> in
+				todo.completed = arguments.completed
+				return todo.update(on: request.db)
+			}
+			.transform(to: true)
+	}
+
 	func deleteTodo(request: Request, arguments: DeleteTodoByArugments) throws -> EventLoopFuture<Bool> {
 		return Todo.find(arguments.id, on: request.db)
 			.unwrap(or: Abort(.notFound))
@@ -43,6 +53,11 @@ extension TodoResolver {
 
 	struct GetTodoByIdArugments: Codable {
 		let id: UUID
+	}
+
+	struct UpdateTodoArugments: Codable {
+		let id: UUID
+		let completed: Bool
 	}
 
 	struct DeleteTodoByArugments: Codable {
