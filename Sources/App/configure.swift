@@ -1,6 +1,8 @@
 import Vapor
 import Fluent
 import FluentPostgresDriver
+import GraphQLKit
+import GraphiQLVapor
 
 // configures your application
 public func configure(_ app: Application) throws {
@@ -18,8 +20,12 @@ public func configure(_ app: Application) throws {
 		as: .psql
 	)
 
-	app.migrations.add(CreateTodoMigration())
+	app.migrations.add(CreateTodoTableMigration())
+	app.migrations.add(TodoAddCompletedMigration())
 
-    // register routes
-    try routes(app)
+	// GraphQL
+
+	app.register(graphQLSchema: todoSchema, withResolver: TodoResolver())
+
+	app.enableGraphiQL()
 }
